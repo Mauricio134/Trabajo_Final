@@ -1,6 +1,5 @@
 
 .background_logo{
-	position: sticky;
 	background-color: #718792;
 	margin: -10px -50px 0px;
 	height: 100px;
@@ -12,9 +11,8 @@
 	background-color: #E1E2E1;
 }
 .position{
-  	position: fixed;
-  	margin: 25px auto;
-  	left: 45%;
+  	margin-top: 1%;
+	margin-left: 43%;
 }
 .box{
 	background-color: white;
