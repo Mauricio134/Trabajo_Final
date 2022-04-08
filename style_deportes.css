@@ -3,9 +3,10 @@ body {
 }
 
 .contenedor{
-    width: 100%;
+    width: 76%;
+    top: 10%;
+    position: relative;
     display: flex;
-    max-width: 1000px;;
 }
 
 .cartita{
