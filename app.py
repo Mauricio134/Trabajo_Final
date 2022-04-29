@@ -1,57 +1,39 @@
-from flask import Flask, render_template, redirect, request, url_for, flash
+from flask import Flask, render_template, redirect, request, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_pymongo import PyMongo
-from flask_login import login_user, login_required, logout_user, current_user
-from flask_login import LoginManager
 from bson.objectid import ObjectId
-from flask_login import UserMixin
+from datetime import timedelta
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/amazon"
 mongo = PyMongo(app)
-app.config['SECRET_KEY'] = 'jajajajajaja'
+app.config['SECRET_KEY'] = 'hello'
 
-login_manager = LoginManager()
-login_manager.login_view = 'login'
-login_manager.init_app(app)
-
-class User(UserMixin):
-    def __init__(self, user_json):
-        self.user_json = user_json
-    def get_id(self):
-        object_id = self.user_json.get('_id')
-        return str(object_id)
-
-'''@login_manager.user_loader
-def load_user(user_id):
-    return  mongo.db.users.find_one({'_id': ObjectId(user_id)})'''
-
-@login_manager.user_loader
-def load_user(user_id):
-    users = mongo.db.users
-    user_json = users.find_one({'_id': ObjectId(user_id)})
-    return User(user_json)
+app.permanent_session_lifetime = timedelta(hours = 3)
 
 @app.route('/')
-@login_required
 def home():
-    return render_template("menu.html")
+    if "user" in session:
+        email = session["user"]
+        return render_template("menu.html")
+    else:
+        return redirect(url_for("login"))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        session.permanent = True
         email = request.form.get('email')
         password = request.form.get('password')
         users = mongo.db.users.find()
         Usuario = False
         Contrasena = False
-        User = {}
+        session["user"] = email
         for user in users:
             if user['email'] == email and check_password_hash(user['password'], password):
                 Usuario = True
                 Contrasena = True
-                User = mongo.db.users.find({'password': user['password']})
                 break
             else:
                 Usuario = False
@@ -59,18 +41,19 @@ def login():
         if Usuario == True:
             if Contrasena == True:
                 flash("Usuario Logueado Correctamente", category='success')
-                login_user(User, remember=True)
                 return redirect(url_for('home'))
             else:
                 flash("Contraseña Incorrecta. Intentalo nuevamente", category='error')
         else:
             flash("Gmail Incorrecto. Intentalo nuevamente", category='error')
-    return render_template("login.html")
+    else:
+        if "user" in session:
+            return redirect(url_for('home'))
+        return render_template("login.html")
 
 @app.route('/logout')
-@login_required
 def logout():
-    logout_user()
+    session.pop("user", None)
     return redirect(url_for("login"))
 
 @app.route('/sign-up', methods=['GET', 'POST'])
