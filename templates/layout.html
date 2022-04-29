@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleDeportes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylemenu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesRegister.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesCar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesLogin.css') }}">
+    <title>Amazon 2.0</title>
+</head>
+{% block content %}
+<body>
+{% for table in tables %}
+            
+    {{ table|safe }}
+{% endfor %}
+</body>
+{% endblock %}
+</html>

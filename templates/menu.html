@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Menu Amazon</title>
-    <link rel="stylesheet" type="text/css" href="stylemenu.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  </head>
-  
+{% extends "layout.html" %}
+{% block content %}
   <body>
     <div class="barra">
       <ul class="menu">
@@ -22,11 +15,17 @@
     </div>
       <div class="lateral">
         <ul class="menuh">
-        <li><a href="#">Deportes</a></li>
-        <li><a href="#">Electrodomesticos</a></li>
-        <li><a href="#">Cocina</a></li>
-        <li><a href="#">Ofertas</a></li>
-      </ul></div>
+          <li><a href="#">Deportes</a></li>
+          <li><a href="#">Electrodomesticos</a></li>
+          <li><a href="#">Cocina</a></li>
+          <li><a href="#">Ofertas</a></li>
+        </ul>
+      </div>
+      <div class="lateral">
+        <ul class="menuh">
+          <li><a href="#">Log Out</a></li>
+        </ul>
+      </div>
     <div class="contenedor">
       <div class="cartita">
           <div class="imagen">
@@ -60,4 +59,4 @@
     </div>
     
   </body>
-</html>
+{% endblock %}

@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="Stylesheet" href="./stylesLogin.css">
-    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@700&display=swap" rel="stylesheet">
-    <title>Inicio de Sesión</title>
-    <meta content="width=device-width, initial-scale=1"name="viewport" />
-</head>
+{% extends "layout.html" %}
+{% block content %}
 
 <body>
     <head class="header">
@@ -19,10 +11,31 @@
     <section class="login">
         <section class = "login__container">
             <h2>Login</h2>
-            <form class="login__container--form">
-                <input class="input" type="text" placeholder="email">
-                <input class="input" type="text" placeholder="contraseña">
-                <button class="button"><a href="#">Iniciar sesión</a></button>
+            {% with messages = get_flashed_messages(with_categories = true) %}
+			    {% if messages %}
+				    {% for category, message in messages %}
+					    {% if category == 'error' %}
+					    <div class="alert alert-danger alter-dismissable fade show">
+						    {{ message }}
+						    <button type="button" class="close" data-dismiss="alert">
+							    <span aria-hidden="true"> &times;</span>
+						    </button>
+					    </div>
+					    {% else %}
+					    <div class="alert alert-success alter-dismissable fade show">
+						    {{ message }}
+						    <button type="button" class="close" data-dismiss="alert">
+							    <span aria-hidden="true"> &times;</span>
+						    </button>
+					    </div>
+					    {% endif %}
+				    {% endfor %}
+			    {% endif %}
+		    {% endwith %}
+            <form class="login__container--form" action="{{ url_for('login') }}" method="post">
+                <input class="input" name="email" type="email" placeholder="email">
+                <input class="password" name="password" type="password" placeholder="contraseña">
+                <input id="logging_button" type="submit" value="Iniciar Sesión" id="boton">
                 <div class="login__container--remember-me">
                     <label>
                         <input type="checkbox" id="cbox1" value="checkbox"> Recuérdame
@@ -30,8 +43,8 @@
                     <a href="#">Olvidé mi contraseña</a>
                 </div>
             </form>
-            <p class="login__container--register">No tienes ninguna cuenta <a href="#">Registrate</a> </p>
+            <p class="login__container--register">No tienes ninguna cuenta <a href="{{ url_for('signup') }}">Registrate</a> </p>
         </section>
     </section>
 </body>
-</html>
+{% endblock %}
