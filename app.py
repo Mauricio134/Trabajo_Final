@@ -100,8 +100,10 @@ def signup():
             }
             flash("Cuenta Creada con Exito!!", category = 'success')
             return redirect(url_for('home'))
-
-    return render_template("register.html")
+    else:
+        if "user" in session:
+            return redirect(url_for('home'))
+        return render_template("register.html")
 
 '''@app.route('/register', methods=['GET','POST'])
 def register():
