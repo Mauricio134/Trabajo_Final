@@ -11,17 +11,19 @@ app.config['SECRET_KEY'] = 'hello'
 
 app.permanent_session_lifetime = timedelta(hours = 3)
 
-@app.route('/')
-def home():
+
+@app.route('/', defaults={'id': ""})
+@app.route('/<id>')
+def home(id):
     if "user" in session:
-        email = session["user"]
+        user = session["user"]
         return render_template("menu.html")
     else:
         return redirect(url_for("login"))
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    id_ = ""
     if request.method == 'POST':
         session.permanent = True
         email = request.form.get('email')
@@ -34,6 +36,8 @@ def login():
             if user['email'] == email and check_password_hash(user['password'], password):
                 Usuario = True
                 Contrasena = True
+                id_ = str(user['_id'])
+                session["user"] = list(user)
                 break
             else:
                 Usuario = False
@@ -41,14 +45,15 @@ def login():
         if Usuario == True:
             if Contrasena == True:
                 flash("Usuario Logueado Correctamente", category='success')
-                return redirect(url_for('home'))
+                return redirect(url_for("home", id=id_ ))
             else:
                 flash("Contraseña Incorrecta. Intentalo nuevamente", category='error')
         else:
             flash("Gmail Incorrecto. Intentalo nuevamente", category='error')
     else:
         if "user" in session:
-            return redirect(url_for('home'))
+            print("a=" , session["user"])
+            return redirect(url_for("home", id=id_ ))
         return render_template("login.html")
 
 @app.route('/logout')
@@ -105,130 +110,5 @@ def signup():
             return redirect(url_for('home'))
         return render_template("register.html")
 
-'''@app.route('/register', methods=['GET','POST'])
-def register():
-    global error, passw, gmail, access
-    message = None
-    #Variables obtenidas del HTML (menu.html)
-    username = request.form.get("username")
-    email = request.form.get("email")
-    password = request.form.get("password")
-    s_password = request.form.get("s_password")
-    #Verificación del email unico y la confirmación de la contraseña
-    if request.method == "POST":
-        users = mongo.db.users.find()
-        for user in users:
-            hashing = check_password_hash(user['password'], password)
-            if (user['email'] == email or hashing == True) and password == s_password:
-                error = True
-                gmail = True
-                break
-            elif (user['email'] != email and hashing != True) and password != s_password:
-                error = True
-                passw = True
-                break
-            elif (user['email'] == email or hashing == True) and password != s_password:
-                error = True
-                passw = True
-                gmail = True
-                break
-
-        if username and email and password and s_password:
-            hash_password = generate_password_hash(password)
-            hash_s_password = generate_password_hash(s_password)
-            id = mongo.db.users.insert_one(
-                {'username': username, 'email': email, 'password': hash_password, 's_password': hash_s_password}
-            )
-            response = {
-                'id': str(id),
-                'username': username,
-                'email': email,
-                'password': hash_password,
-                's_password': hash_s_password
-            }
-            session["user"] = user
-            return redirect(url_for("index"))
-        else:
-            return not_found()
-    users = mongo.db.users.find()
-    for user in users:
-        hashing = check_password_hash(user['password'], password)
-        if (user['email'] == email or hashing == True) and password == s_password:
-            error = True
-            gmail = True
-            break
-        elif (user['email'] != email and hashing != True) and password != s_password:
-            error = True
-            passw = True
-            break
-        elif (user['email'] == email or hashing == True) and password != s_password:
-            error = True
-            passw = True
-            gmail = True
-            break
-    if error == True and passw == True and gmail == False:
-        error = False
-        pasw = False
-        message = 'Revisar la confirmación de la contraseña'
-    elif error == True and gmail == True and passw == False:
-        error = False
-        gmail = False
-        message = 'Ya existe un Usuario con ese gmail'
-    elif error == True and gmail == True and passw == True:
-        error = False
-        gmail = False
-        pasw = False
-        message = 'Volver a confirmar la contraseña o cambiar de gmail'
-    return render_template("register.html", message=message)
-
-@app.route('/users', methods=['GET'])
-def users():
-    users = mongo.db.users.find()
-    response = json_util.dumps(users)
-    return Response(response, mimetype='application/json')
-
-@app.route('/user')
-def index():
-    if "user" in session:
-        user = session["user"]
-        return render_template("menu.html")
-    else:
-        return redirect(url_for("login"))
-
-@app.route('/users/<id>', methods=['GET'])
-def menu(id):
-    user = mongo.db.users.find_one({'_id': ObjectId(id)})
-    response = json_util.dumps(user)
-    return Response(response, mimetype='application/json')
-
-@app.errorhandler(404)
-def not_found(error = None):
-    response = jsonify({
-        'error': 'No encontrado',
-        'message': 'Resource Not Found: '+request.url,
-        'status': 404
-    })
-    response.status_code = 404
-    return response
-
-@app.errorhandler(404)
-def not_equal(error = None):
-    response = jsonify({
-        'error': 'Not Password Confirmated',
-        'message': 'Resource Not Found: '+request.url,
-        'status': 404
-    })
-    response.status_code = 404
-    return response
-
-@app.errorhandler(404)
-def not_allowed(error = None):
-    response = jsonify({
-        'error': 'This user already exists'
-    })
-    response.status_code = 404
-    return response
-
-'''
 if __name__ == '__main__':
     app.run(debug = True)

@@ -38,9 +38,8 @@
                 <input id="logging_button" type="submit" value="Iniciar Sesión" id="boton">
                 <div class="login__container--remember-me">
                     <label>
-                        <input type="checkbox" id="cbox1" value="checkbox"> Recuérdame
+                        <a href="{{ url_for('signup') }}"><input type="checkbox" id="cbox1" value="checkbox"> </a> Olvidé mi contraseña
                     </label>
-                    <a href="#">Olvidé mi contraseña</a>
                 </div>
             </form>
             <p class="login__container--register">No tienes ninguna cuenta <a href="{{ url_for('signup') }}">Registrate</a> </p>
