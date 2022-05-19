@@ -42,10 +42,9 @@ def login():
             if Contrasena == True:
                 flash("Usuario Logueado Correctamente", category='success')
                 return redirect(url_for('home'))
-            else:
-                flash("Contraseña Incorrecta. Intentalo nuevamente", category='error')
         else:
-            flash("Gmail Incorrecto. Intentalo nuevamente", category='error')
+            flash("Datos Incorrectos. Intentalo nuevamente", category='error')
+        return render_template("login.html")
     else:
         if "user" in session:
             return redirect(url_for('home'))
