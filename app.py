@@ -44,7 +44,6 @@ def login():
                 Contrasena = False
         if Usuario == True:
             if Contrasena == True:
-                flash("Usuario Logueado Correctamente", category='success')
                 return redirect(url_for("home", id=id_ ))
             else:
                 flash("Contraseña Incorrecta. Intentalo nuevamente", category='error')
@@ -82,7 +81,7 @@ def signup():
                 flash("Algunos datos ya existen", category='error')
                 break
         if len(email) < 15:
-            flash("El gmail debe ser mayor de 4 caracteres", category='error')
+            flash("El gmail debe ser mayor de 15 caracteres", category='error')
         elif len(username) < 2:
             flash("El nombre debe ser mas grande que 2 caracteres", category='error')
         elif password != s_password:
