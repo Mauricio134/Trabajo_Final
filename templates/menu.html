@@ -7,6 +7,7 @@
                   <img class="posicion" src="https://cdn.glitch.global/7917a7da-a823-4055-9a44-68d46f07e0ed/logo.png?v=1649200413762"  width="100" height="25">
               </div></b></li>
         <li><a href="#"><div class="posicion2">Buscador</div></a></li>
+        <li><a href="{{ url_for('addbrand') }}"><div class="posicion3">Agregar</div></a></li>
         <li><a href="#"><div class="posicion3">Carrito</div></a></li>
       </ul>
       <form class="formulario">
@@ -56,6 +57,15 @@
               <button class="btn"><i class="fa fa-plus"></i> CARRITO</button>
           </div>
       </div>
+    </div>
+    <div>
+      {% for product in productos %}
+        <h2>{{product.name}}</h2>
+        <h2>{{product.prize}}</h2>
+        <h2>{{product.discount}}</h2>
+        <h2>{{product.description}}</h2>
+        <h2>{{product.file}}</h2>
+      {% endfor %}
     </div>
     
   </body>

@@ -17,7 +17,8 @@ app.permanent_session_lifetime = timedelta(hours = 3)
 def home(id):
     if "user" in session:
         user = session["user"]
-        return render_template("menu.html")
+        productos = mongo.db.products.find()
+        return render_template("menu.html", productos = productos)
     else:
         return redirect(url_for("login"))
 
@@ -45,11 +46,10 @@ def login():
         if Usuario == True:
             if Contrasena == True:
                 flash("Usuario Logueado Correctamente", category='success')
-                return redirect(url_for("home", id=id_ ))
-            else:
-                flash("Contraseña Incorrecta. Intentalo nuevamente", category='error')
+                return redirect(url_for('home'))
         else:
-            flash("Gmail Incorrecto. Intentalo nuevamente", category='error')
+            flash("Datos Incorrectos. Intentalo nuevamente", category='error')
+        return render_template("login.html")
     else:
         if "user" in session:
             print("a=" , session["user"])
@@ -109,6 +109,25 @@ def signup():
         if "user" in session:
             return redirect(url_for('home'))
         return render_template("register.html")
+
+
+@app.route('/addbrand', methods=['GET', 'POST'])
+def addbrand():
+    if request.method == 'POST':
+        productname = request.form.get('productname')
+        prize = request.form.get('prize')
+        discount = request.form.get('discount')
+        description = request.form.get('description')
+        image = request.form.get('image')
+        id = mongo.db.products.insert_one({
+            'name': productname, 
+            'prize': prize, 
+            'discount': discount, 
+            'description': description,
+            'file': image
+        })
+        return redirect(url_for('home'))
+    return render_template('addbrand.html')
 
 if __name__ == '__main__':
     app.run(debug = True)
