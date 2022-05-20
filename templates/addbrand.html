@@ -1,13 +1,25 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Agregar Producto</h1>
+    {% with messages = get_flashed_messages(with_categories = true) %}
+		{% if messages %}
+		    {% for category, message in messages %}
+			    {% if category == 'error' %}
+			    <div class="alert alert-danger alter-dismissable fade show">
+				    {{ message }}
+			    </div>
+			    {% endif %}
+		    {% endfor %}
+		{% endif %}
+	{% endwith %}
     <form action="{{ url_for('addbrand') }}" method="post">
+        <input id="pass" type="password" name="contra" placeholder="Digita tu contraseña"><br>
         <input id="nombre" type="text" name="productname" placeholder="Nombre del Producto"><br>
 		<input id="gmail" type="number" name="prize" placeholder="Precio del Producto"><br>
 		<input id="password" type="number" name="discount" placeholder="Descuento"><br>
 		<textarea id="" name="description" placeholder="Descripcion del producto"></textarea><br>
         <input type="file" name="image" id="">
         <br><br>
-		<input id="" type="submit" value="Registrarse" id="boton">
+		<input id="" type="submit" value="Crear" id="boton">
     </form>
 {%endblock content%}
