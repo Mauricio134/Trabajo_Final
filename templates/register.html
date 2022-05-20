@@ -30,14 +30,14 @@
 				{% endfor %}
 			{% endif %}
 		{% endwith %}
-		<form action="{{ url_for('signup') }}" method="post">
-			<input id="ubi" type="text" name="username" placeholder="nombre de usuario"><br>
-			<input id="ubi" type="email" name="email" placeholder="email"><br>
-			<input id="ubi_1" type="password" name="password" placeholder="contraseña"><br>
-			<input id="ubi" type="password" name="s_password" placeholder="confirmar contraseña">
+		<form id="form_register" action="{{ url_for('signup') }}" method="post">
+			<input id="name" id="ubi" type="text" name="username" placeholder="nombre de usuario"><br>
+			<input id="gmail" id="ubi" type="email" name="email" placeholder="email"><br>
+			<input id="password" id="ubi_1" type="password" name="password" placeholder="contraseña"><br>
+			<input id="s_pass" id="ubi" type="password" name="s_password" placeholder="confirmar contraseña">
 			<p class="error error--hidden"></p>
 			<br><br>
-			<input id="register_botton" type="submit" value="Registrarse" id="boton">
+			<input id="submit_register" type="submit" value="Registrarse" id="boton">
 		</form>
 		<p class="log_in">¿Ya tienes una cuenta? <a class="log_in1" href="{{ url_for('login') }}">Iniciar sesión</a></p>
 	</div>

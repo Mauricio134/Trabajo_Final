@@ -8,17 +8,17 @@ app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/amazon"
 mongo = PyMongo(app)
 app.config['SECRET_KEY'] = 'hello'
-
 app.permanent_session_lifetime = timedelta(hours = 3)
 
 @app.route('/')
 def home():
     if "user" in session:
-        email = session["user"]
-        return render_template("menu.html")
+        user = session["user"]
+        productos = mongo.db.products.find()
+        users = mongo.db.users.find()
+        return render_template("menu.html", productos = productos, users = users)
     else:
         return redirect(url_for("login"))
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -34,20 +34,28 @@ def login():
             if user['email'] == email and check_password_hash(user['password'], password):
                 Usuario = True
                 Contrasena = True
+                id_ = str(user['_id'])
+                session["user"] = list(user)
                 break
             else:
                 Usuario = False
                 Contrasena = False
+<<<<<<< HEAD
         if Usuario == True:
             if Contrasena == True:
                 flash("Usuario Logueado Correctamente", category='success')
                 return redirect(url_for('home'))
+=======
+        if Usuario == True and Contrasena == True:
+            flash("Usuario Logueado Correctamente", category='success')
+            return redirect(url_for('home'))
+>>>>>>> new
         else:
             flash("Datos Incorrectos. Intentalo nuevamente", category='error')
         return render_template("login.html")
     else:
         if "user" in session:
-            return redirect(url_for('home'))
+            return redirect(url_for("home"))
         return render_template("login.html")
 
 @app.route('/logout')
@@ -90,144 +98,47 @@ def signup():
             id = mongo.db.users.insert_one(
             {'username': username, 'email': email, 'password': hash_password, 's_password': hash_s_password}
             )
-            response = {
-                'id': str(id),
-                'username': username,
-                'email': email,
-                'password': hash_password,
-                's_password': hash_s_password
-            }
             flash("Cuenta Creada con Exito!!", category = 'success')
             return redirect(url_for('home'))
+        return render_template("register.html")
     else:
         if "user" in session:
             return redirect(url_for('home'))
         return render_template("register.html")
 
-'''@app.route('/register', methods=['GET','POST'])
-def register():
-    global error, passw, gmail, access
-    message = None
-    #Variables obtenidas del HTML (menu.html)
-    username = request.form.get("username")
-    email = request.form.get("email")
-    password = request.form.get("password")
-    s_password = request.form.get("s_password")
-    #Verificación del email unico y la confirmación de la contraseña
-    if request.method == "POST":
+@app.route('/addbrand', methods=['GET', 'POST'])
+def addbrand():
+    if request.method == 'POST':
+        contra = request.form.get('contra')
+        productname = request.form.get('productname')
+        prize = request.form.get('prize')
+        discount = request.form.get('discount')
+        description = request.form.get('description')
+        image = request.form.get('image')
         users = mongo.db.users.find()
+        user_id = None
         for user in users:
-            hashing = check_password_hash(user['password'], password)
-            if (user['email'] == email or hashing == True) and password == s_password:
-                error = True
-                gmail = True
-                break
-            elif (user['email'] != email and hashing != True) and password != s_password:
-                error = True
-                passw = True
-                break
-            elif (user['email'] == email or hashing == True) and password != s_password:
-                error = True
-                passw = True
-                gmail = True
-                break
-
-        if username and email and password and s_password:
-            hash_password = generate_password_hash(password)
-            hash_s_password = generate_password_hash(s_password)
-            id = mongo.db.users.insert_one(
-                {'username': username, 'email': email, 'password': hash_password, 's_password': hash_s_password}
-            )
-            response = {
-                'id': str(id),
-                'username': username,
-                'email': email,
-                'password': hash_password,
-                's_password': hash_s_password
-            }
-            session["user"] = user
-            return redirect(url_for("index"))
+            hashing = check_password_hash(user['password'], contra)
+            if hashing:
+                user_id = user['_id']
+        if user_id == None:
+            flash("No eres el usuario", category='error')
+            return redirect(url_for('addbrand'))
         else:
-            return not_found()
-    users = mongo.db.users.find()
-    for user in users:
-        hashing = check_password_hash(user['password'], password)
-        if (user['email'] == email or hashing == True) and password == s_password:
-            error = True
-            gmail = True
-            break
-        elif (user['email'] != email and hashing != True) and password != s_password:
-            error = True
-            passw = True
-            break
-        elif (user['email'] == email or hashing == True) and password != s_password:
-            error = True
-            passw = True
-            gmail = True
-            break
-    if error == True and passw == True and gmail == False:
-        error = False
-        pasw = False
-        message = 'Revisar la confirmación de la contraseña'
-    elif error == True and gmail == True and passw == False:
-        error = False
-        gmail = False
-        message = 'Ya existe un Usuario con ese gmail'
-    elif error == True and gmail == True and passw == True:
-        error = False
-        gmail = False
-        pasw = False
-        message = 'Volver a confirmar la contraseña o cambiar de gmail'
-    return render_template("register.html", message=message)
+            id = mongo.db.products.insert_one({
+                'name': productname, 
+                'prize': prize, 
+                'discount': discount, 
+                'description': description,
+                'file': image,
+                'user_id': user_id
+            })
+        return redirect(url_for('home'))
+    return render_template('addbrand.html')
 
-@app.route('/users', methods=['GET'])
-def users():
-    users = mongo.db.users.find()
-    response = json_util.dumps(users)
-    return Response(response, mimetype='application/json')
-
-@app.route('/user')
-def index():
-    if "user" in session:
-        user = session["user"]
-        return render_template("menu.html")
-    else:
-        return redirect(url_for("login"))
-
-@app.route('/users/<id>', methods=['GET'])
-def menu(id):
-    user = mongo.db.users.find_one({'_id': ObjectId(id)})
-    response = json_util.dumps(user)
-    return Response(response, mimetype='application/json')
-
-@app.errorhandler(404)
-def not_found(error = None):
-    response = jsonify({
-        'error': 'No encontrado',
-        'message': 'Resource Not Found: '+request.url,
-        'status': 404
-    })
-    response.status_code = 404
-    return response
-
-@app.errorhandler(404)
-def not_equal(error = None):
-    response = jsonify({
-        'error': 'Not Password Confirmated',
-        'message': 'Resource Not Found: '+request.url,
-        'status': 404
-    })
-    response.status_code = 404
-    return response
-
-@app.errorhandler(404)
-def not_allowed(error = None):
-    response = jsonify({
-        'error': 'This user already exists'
-    })
-    response.status_code = 404
-    return response
-
-'''
+@app.route('/delete/<id>')
+def delete(id):
+    productos = mongo.db.products.find_one_and_delete({"_id": ObjectId(id)})
+    return redirect(url_for('home'))
 if __name__ == '__main__':
     app.run(debug = True)

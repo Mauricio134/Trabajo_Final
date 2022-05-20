@@ -7,6 +7,7 @@
                   <img class="posicion" src="https://cdn.glitch.global/7917a7da-a823-4055-9a44-68d46f07e0ed/logo.png?v=1649200413762"  width="100" height="25">
               </div></b></li>
         <li><a href="#"><div class="posicion2">Buscador</div></a></li>
+          <li><a href="{{ url_for('addbrand') }}"><div class="posicion3">Agregar</div></a></li>
         <li><a href="#"><div class="posicion3">Carrito</div></a></li>
       </ul>
       <form class="formulario">
@@ -27,35 +28,21 @@
         </ul>
       </div>
     <div class="contenedor">
-      <div class="cartita">
-          <div class="imagen">
-              <img src="../TiendaVirtual/images/nike.jpg" alt="">
+      {% for product in productos %}
+          <div class="cartita">
+                <div class="imagen">
+                    <img src={{product.file}} alt="">
+                </div>
+                <div class="texto">
+                    <p class="nombre"><strong>Nombre del Producto:</strong><br>{{product.name}}</p>
+                    <p class="costo"><strong>Costo:</strong> s/.{{product.prize}}</p>
+                    <p class="costo"><strong>Descuento:</strong> Encuentra hasta un {{product.discount}}% de descuento</p>
+                    <p class="costo"><strong>Descripción:</strong> {{product.description}}</p>
+                    <button class="btn"><i class="fa fa-plus"></i>CARRITO</button>
+                    <button class="btn"><a href="{{ url_for('delete', id = product._id)}}">BORRAR</a></button>      
+                </div>
           </div>
-          <div class="texto">
-              <p class="nombre"><strong>Nombre del Producto:</strong><br>Zapatillas Deportivas Nike</p>
-              <p class="costo"><strong>Costo:</strong> s/.80,00</p>
-              <button class="btn"><i class="fa fa-plus"></i> CARRITO</div>
-      </div>
-      <div class="cartita">
-          <div class="imagen">
-              <img src="../TiendaVirtual/images/pesas.jpg" alt="">
-          </div>
-          <div class="texto">
-              <p class="nombre"><strong>Nombre del Producto:</strong><br>Pesas Mr. Musculo</p>
-              <p class="costo"><strong>Costo:</strong> s/. 50,00</p>
-              <button class="btn"><i class="fa fa-plus"></i> CARRITO</button>
-          </div>
-      </div>
-      <div class="cartita">
-          <div class="imagen">
-              <img src="../TiendaVirtual/images/caminadora.jpg" alt="">
-          </div>
-          <div class="texto">
-              <p class="nombre"><strong>Nombre del Producto:</strong><br>Caminadora El Camino</p>
-              <p class="costo"><strong>Costo:</strong> s/. 1200,00</p>
-              <button class="btn"><i class="fa fa-plus"></i> CARRITO</button>
-          </div>
-      </div>
+      {% endfor %}
     </div>
     
   </body>
